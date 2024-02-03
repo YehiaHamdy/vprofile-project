@@ -9,7 +9,7 @@ services:
       - "3306:3306"
     volumes:
       - vprodbdata:/var/lib/mysql
-    enviroment:
+    environment:
       - MYSQL_ROOT_PASSWORD=vprodbpass
 
   vprocache01:
@@ -20,14 +20,15 @@ services:
   vpromq01:
     image: rabbitmq
     ports:
+      - "5672:5672"  # Change this to 5672 for AMQP protocol
       - "15672:15672"
     volumes:
-      - vprodbdata:/var/lib/mysql
-    enviroment:
-      - RABBITMQ.USERNAME=guest
-      - RABBITMQ.PASSWORD=guest
-  
-    vproapp:
+      - vpromqdata:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+  vproapp:
     build:
       context: ./Docker-files/app
     image: yehiahamdy/vpro-app
@@ -35,9 +36,9 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - vprodbdata:/usr/local/tomcat/webapps
+      - vproappdata:/usr/local/tomcat/webapps
 
-    vproweb:
+  vproweb:
     build:
       context: ./Docker-files/web
     image: yehiahamdy/vpro-web
@@ -45,8 +46,10 @@ services:
     ports:
       - "80:80"
     volumes:
-      - vprodbdata:/usr/local/tomcat/webapps
+      - vprowebdata:/usr/local/tomcat/webapps
 
 volumes:
   vprodbdata: {}
   vproappdata: {}
+  vprowebdata: {}
+  vpromqdata: {}
