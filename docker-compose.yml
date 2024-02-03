@@ -1,12 +1,13 @@
 version: '3.8'
 services:
-  web:
+  vprodb:
     build:
+      context: ./Docker-files/db
     ports:
-      - "8000:5000"
+      - "3306:3306"
     volumes:
-      - .:/code
+      - vprodbdata:/var/lib/mysql
     enviroment:
-      - FLASK_DEBUG: "true"
+      - MYSQL_ROOT_PASSWORD=vprodbpass
   redis:
     image: "redis:alpine"
